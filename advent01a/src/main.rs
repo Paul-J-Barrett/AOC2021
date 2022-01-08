@@ -1,18 +1,22 @@
 use std::path::Path;
-use std::io::BufReader;
-use std::file::File;
+use std::io::{self, BufReader};
+use std::io::prelude::*;
+use std::fs::File;
+use itertools::zip;
 
-fn main() {
-    let mut count:i32=0;
-    let mut previous:i32 = i32::MAX;
-    //readfile in and split values on newlines input file is input.txt
-    let mut _lines:Vec<String>=BufReader::new(File::open(Path::new("input.txt"))).unwrap().lines();
-    for (i, v) in  _lines.into_iter().enumerate() {
-        if i==0 { continue }
-        if let Some(x)=Ok(Ok(v.parse::<i32>();
+extern crate itertools;
 
-        prious=x;
-    }
-    //use itertools to find out how many increases there are from previous value 1st value is not an increase
+fn main()-> io::Result<()>{
 
+    let file = File::open(Path::new("input.txt")).expect("File not found.");
+    let reader = BufReader::new(file);
+
+    let numbers:Vec<i32> = reader.lines()
+        .map(|line| line.unwrap().parse::<i32>().unwrap()).collect();
+
+    let z = zip(numbers.iter().cloned(),numbers[1..].iter().cloned());
+    let _count:i32= z.map(|(a, b)| (a-b<0) as i32).sum();
+    println!("There were {} increase measurements from the sub.",_count);
+
+    Ok(())
 }
